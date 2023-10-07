@@ -28,7 +28,7 @@ class Pipes:
     
     def draw(self, window):
         self.bottom_rect = pygame.Rect(self.x, Ground.ground_level - self.bottom_height, self.width, self.bottom_height)
-        pygame.draw.rect(window, config.WHITE, self.top_rect )
+        pygame.draw.rect(window, config.WHITE, self.bottom_rect )
 
         self.top_rect = pygame.Rect(self.x, 0, self.width, self.top_height)
         pygame.draw.rect(window, config.WHITE, self.top_rect)
