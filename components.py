@@ -35,7 +35,7 @@ class Pipes:
 
     def update(self):
         self.x -= 1
-        if self.x + Pipes.width <= 50:
+        if self.x + Pipes.width <= 15:
             self.passed = True
-        if self.x <= self.width:
+        if self.x <= self.width - self.width:
             self.off_screen = True

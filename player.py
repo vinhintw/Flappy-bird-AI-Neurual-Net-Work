@@ -1,7 +1,7 @@
 import pygame
 import random
 import config
-
+import brain
 
 
 class Player:
@@ -13,8 +13,12 @@ class Player:
         self.flap = False
         self.alive = True
 
-        #AI
+        # AI
         self.decision = None
+        self.vision = [0.5, 1, 0.5]
+        self.inputs = 3
+        self.brain = brain.Brain(self.inputs)
+        self.brain.generate_net()
 
 
     #Game ralated function
@@ -52,13 +56,42 @@ class Player:
         if self.vel >=3:
             self.flap = False
 
+    @staticmethod
+    def closest_pipe():
+        for p in config.pipes:
+            if not p.passed:
+                return p
+
     #AI related function
+    def look(self):
+        if config.pipes:
+            # Calculate coordinates for lines
+            top_pipe = self.closest_pipe().top_rect
+            bottom_pipe = self.closest_pipe().bottom_rect
+            top_pipe_x = top_pipe.centerx
+            top_pipe_bottom = top_pipe.bottom
+            bottom_pipe_x = bottom_pipe.centerx
+            bottom_pipe_top = bottom_pipe.top
+
+            # Line to top pipe
+            self.vision[0] = max(0, self.rect.center[1] - top_pipe_bottom) / 500
+            pygame.draw.line(config.window, self.color, self.rect.center,
+                            (top_pipe_x, top_pipe_bottom))
+
+            # Line to mid pipe (the x-coordinate is already calculated)
+            self.vision[1] = max(0, bottom_pipe_x - self.rect.center[0]) / 500
+            #pygame.draw.line(config.window, self.color, self.rect.center,
+            #                (bottom_pipe_x, self.rect.center[1]))
+
+            # Line to bottom pipe
+            self.vision[2] = max(0, bottom_pipe_top - self.rect.center[1]) / 500
+            pygame.draw.line(config.window, self.color, self.rect.center,
+                            (bottom_pipe_x, bottom_pipe_top))
+
+
     def think(self):
-        self.decision = random.uniform(0, 1)
+        self.decision = self.brain.feed_forward(self.vision)
         if self.decision > 0.73:
             self.bird_flap()
 
-
-
-
-
+        

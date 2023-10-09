@@ -4,6 +4,8 @@ import config
 import components
 import population
 
+
+
 pygame.init
 clock = pygame.time.Clock()
 population = population.Population(100)
