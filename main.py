@@ -7,7 +7,7 @@ import player
 
 pygame.init
 clock = pygame.time.Clock()
-population = population.Population(50)
+population = population.Population(200)
 player = player.Player()
 
 def generate_pipes():

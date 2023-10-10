@@ -14,7 +14,6 @@ class Population:
         for i in range(0, self.size):
             self.players.append(player.Player())
 
-    
     def update_live_player(self):
         for p in self.players:
             if p.alive:
@@ -36,8 +35,13 @@ class Population:
         print('KILL STALE')
         self.kill_stale_species()
 
+        print('SORT BY FITNESS')
+        self.sort_species_by_fitness()
+
         print('CHILDREN GOR NEXT GEN')
         self.next_gen()
+        print(self.generation)
+        print("-----------------------------------")
 
     def speciate(self):
         # Remove current players before speciate
