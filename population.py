@@ -88,7 +88,6 @@ class Population:
         for s in species_bin:
             self.species.remove(s)
 
-
     def sort_species_by_fitness(self):
         for s in self.species:
             s.sort_player_by_fitness()

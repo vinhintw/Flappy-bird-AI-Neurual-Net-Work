@@ -6,11 +6,11 @@ class Species:
         self.players = []
         self.average_fitness = 0
         self.threshold = 1.2
-        self.staleness = 0
         self.players.append(player)
         self.benchmark_fitness = player.fitness
         self.benchmark_brain = player.brain.clone()
         self.champion = player.clone()
+        self.staleness = 0
 
     def similarity(self, brain):
         similarity = self.weight_difference(self.benchmark_brain, brain)
@@ -37,7 +37,6 @@ class Species:
             self.champion = self.players[0].clone()
         else:
             self.staleness +=1
-
 
     def calcalulate_average_fitness(self):
         total_fitness = 0 

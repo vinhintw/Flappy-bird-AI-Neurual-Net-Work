@@ -3,7 +3,6 @@ import config
 import random
 
 
-
 class Ground:
     ground_level = 500
 
@@ -18,6 +17,7 @@ class Ground:
 class Pipes:
     width = 15
     opening = 100
+
     def __init__(self, win_width):
         self.x = win_width
         self.bottom_height = random.randint(10, 300)

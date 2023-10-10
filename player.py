@@ -2,13 +2,11 @@ import pygame
 import random
 import config
 import brain
-import pygame.font
 
-
-pygame.init()
 
 class Player:
     def __init__(self):
+        #Bird
         self.x, self.y = 50, 200
         self.rect = pygame.Rect(self.x, self.y, 20, 20)
         self.color = random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)
@@ -17,11 +15,6 @@ class Player:
         self.alive = True
         self.lifespan = 0
 
-
-        # Font for displaying text
-        self.font = pygame.font.SysFont('sans', 14)
-        self.text_color = (255, 255, 255)  # White color
-
         # AI
         self.decision = None
         self.vision = [0.5, 1, 0.5]
@@ -29,7 +22,6 @@ class Player:
         self.inputs = 3
         self.brain = brain.Brain(self.inputs)
         self.brain.generate_net()
-
 
     #Game ralated function
     def draw (self, window):
@@ -94,17 +86,10 @@ class Player:
             pygame.draw.line(config.window, self.color, self.rect.center,
                              (self.rect.center[0], config.pipes[0].bottom_rect.top))
 
-
     def think(self):
         self.decision = self.brain.feed_forward(self.vision)
         if self.decision > 0.73:
             self.bird_flap()
-
-
-    def display_decision(self, window):
-        decision_text = self.font.render("Decision:" + str(self.decision) , True, self.text_color)
-        window.blit(decision_text, (10, 10))  # Adjust the position as needed
-
 
     def calulate_fitness(self):
         self.fitness = self.lifespan
@@ -115,5 +100,3 @@ class Player:
         clone.brain = self.brain.clone()
         clone.brain.generate_net()
         return clone
-
-        

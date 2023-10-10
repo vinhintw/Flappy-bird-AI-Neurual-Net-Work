@@ -15,9 +15,7 @@ class Connection:
                 self.weight = 1
             if self.weight < -1:
                 self.weight = -1
+
     def clone(self, from_node, to_node):
         clone = Connection(from_node, to_node, self.weight)
         return clone
-
-
-        
