@@ -15,7 +15,7 @@ class Species:
     def similarity(self, brain):
         similarity = self.weight_difference(self.benchmark_brain, brain)
         return self.threshold > similarity
-    
+
     @staticmethod
     def weight_difference(brain_1, brain_2):
         total_weight_difference = 0
@@ -24,22 +24,22 @@ class Species:
                 if i == j:
                     total_weight_difference += abs(brain_1.connections[i].weight -
                                                    brain_2.connections[j].weight)
-        return total_weight_difference            
-        
+        return total_weight_difference
+
     def add_to_species(self, player):
         self.players.append(player)
 
-    def sort_player_by_fitness(self):
-        self.players.sort(key= operator.attrgetter('fitness'), reverse=True)
+    def sort_players_by_fitness(self):
+        self.players.sort(key=operator.attrgetter('fitness'), reverse=True)
         if self.players[0].fitness > self.benchmark_fitness:
             self.staleness = 0
             self.benchmark_fitness = self.players[0].fitness
             self.champion = self.players[0].clone()
         else:
-            self.staleness +=1
+            self.staleness += 1
 
-    def calcalulate_average_fitness(self):
-        total_fitness = 0 
+    def calculate_average_fitness(self):
+        total_fitness = 0
         for p in self.players:
             total_fitness += p.fitness
         if self.players:

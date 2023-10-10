@@ -14,7 +14,7 @@ class Population:
         for i in range(0, self.size):
             self.players.append(player.Player())
 
-    def update_live_player(self):
+    def update_live_players(self):
         for p in self.players:
             if p.alive:
                 p.look()
@@ -22,47 +22,52 @@ class Population:
                 p.draw(config.window)
                 p.update(config.ground)
 
-    def natural_seclection(self):
-        print('SPECIATE')
-        self.speciate()     # speciate
+    def natural_selection(self):
+        #print('SPECIATE')
+        self.speciate()
 
-        print('CALCULATE FITNESS')
-        self.calulate_fitness()     #Calulate fitness
+        #print('CALCULATE FITNESS')
+        self.calculate_fitness()
 
-        print('KILL EXTINCT')
+        #print('KILL EXTINCT')
         self.kill_extinct_species()
 
-        print('KILL STALE')
+        #print('KILL STALE')
         self.kill_stale_species()
 
-        print('SORT BY FITNESS')
+        #print('SORT BY FITNESS')
         self.sort_species_by_fitness()
 
-        print('CHILDREN GOR NEXT GEN')
+        #print('CHILDREN FOR NEXT GEN')
         self.next_gen()
-        print(self.generation)
-        print("-----------------------------------")
+
+        print("Gen: " + str(self.generation))
+        print("Best score: " + str(config.score))
+        if config.score > config.best_score:
+            config.best_score = config.score
+            config.best_score_of_generation = self.generation
+        print("----------------------------")
+
 
     def speciate(self):
-        # Remove current players before speciate
         for s in self.species:
             s.players = []
-        
-        for p in self.players:      #loops on all players
+
+        for p in self.players:
             add_to_species = False
             for s in self.species:
-                if s.similarity(p.brain):       #if player's brain is similarity -> add to species
-                    s.add_to_species = True
+                if s.similarity(p.brain):
+                    s.add_to_species(p)
+                    add_to_species = True
                     break
             if not add_to_species:
                 self.species.append(species.Species(p))
 
-    def calulate_fitness(self):
+    def calculate_fitness(self):
         for p in self.players:
-            p.calulate_fitness()
-
+            p.calculate_fitness()
         for s in self.species:
-            s.calcalulate_average_fitness()
+            s.calculate_average_fitness()
 
     def kill_extinct_species(self):
         species_bin = []
@@ -77,7 +82,7 @@ class Population:
         species_bin = []
         for s in self.species:
             if s.staleness >= 8:
-                if len(self.species) > len(species_bin) +1:
+                if len(self.species) > len(species_bin) + 1:
                     species_bin.append(s)
                     for p in s.players:
                         player_bin.append(p)
@@ -90,7 +95,7 @@ class Population:
 
     def sort_species_by_fitness(self):
         for s in self.species:
-            s.sort_player_by_fitness()
+            s.sort_players_by_fitness()
 
         self.species.sort(key=operator.attrgetter('benchmark_fitness'), reverse=True)
 
@@ -101,9 +106,8 @@ class Population:
         for s in self.species:
             children.append(s.champion.clone())
 
-        # Fill open player slots are dead
+        # Fill open player slots with children
         children_per_species = math.floor((self.size - len(self.species)) / len(self.species))
-
         for s in self.species:
             for i in range(0, children_per_species):
                 children.append(s.offspring())
@@ -111,12 +115,12 @@ class Population:
         while len(children) < self.size:
             children.append(self.species[0].offspring())
 
-        self.players: []
+        self.players = []
         for child in children:
             self.players.append(child)
         self.generation += 1
 
-    #Return true if all player are dead
+    # Return true if all players are dead
     def extinct(self):
         extinct = True
         for p in self.players:

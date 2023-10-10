@@ -91,7 +91,7 @@ class Player:
         if self.decision > 0.73:
             self.bird_flap()
 
-    def calulate_fitness(self):
+    def calculate_fitness(self):
         self.fitness = self.lifespan
 
     def clone(self):
