@@ -34,7 +34,7 @@ class Pipes:
         pygame.draw.rect(window, config.WHITE, self.top_rect)
 
     def update(self):
-        self.x -= 1
+        self.x -= 1.5
         if self.x + Pipes.width <= 15:
             self.passed = True
         if self.x <= self.width - self.width:

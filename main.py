@@ -3,12 +3,12 @@ from sys import exit
 import config
 import components
 import population
-
-
+import player
 
 pygame.init
 clock = pygame.time.Clock()
-population = population.Population(100)
+population = population.Population(50)
+player = player.Player()
 
 def generate_pipes():
     config.pipes.append(components.Pipes(config.win_width))
@@ -44,7 +44,11 @@ def main():
         if not population.extinct():
             population.update_live_player()
         else:
-            pass
+            config.pipes.clear()    #CLear pipes before create new generation player
+            population.natural_seclection()
+
+        # Display decision value
+        #player.display_decision(config.window)
 
         clock.tick(60)
         pygame.display.flip()

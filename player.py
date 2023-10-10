@@ -2,7 +2,10 @@ import pygame
 import random
 import config
 import brain
+import pygame.font
 
+
+pygame.init()
 
 class Player:
     def __init__(self):
@@ -12,10 +15,17 @@ class Player:
         self.vel = 0
         self.flap = False
         self.alive = True
+        self.lifespan = 0
+
+
+        # Font for displaying text
+        self.font = pygame.font.SysFont('sans', 14)
+        self.text_color = (255, 255, 255)  # White color
 
         # AI
         self.decision = None
         self.vision = [0.5, 1, 0.5]
+        self.fitness = 0
         self.inputs = 3
         self.brain = brain.Brain(self.inputs)
         self.brain.generate_net()
@@ -44,6 +54,10 @@ class Player:
             self.rect.y += self.vel
             if self.vel >5:
                 self.vel = 5
+
+            # Increment lifespan
+            self.lifespan += 1
+            
         else:
             self.alive = False
             self.flap = False
@@ -65,33 +79,41 @@ class Player:
     #AI related function
     def look(self):
         if config.pipes:
-            # Calculate coordinates for lines
-            top_pipe = self.closest_pipe().top_rect
-            bottom_pipe = self.closest_pipe().bottom_rect
-            top_pipe_x = top_pipe.centerx
-            top_pipe_bottom = top_pipe.bottom
-            bottom_pipe_x = bottom_pipe.centerx
-            bottom_pipe_top = bottom_pipe.top
-
             # Line to top pipe
-            self.vision[0] = max(0, self.rect.center[1] - top_pipe_bottom) / 500
+            self.vision[0] = max(0, self.rect.center[1] - self.closest_pipe().top_rect.bottom) / 500
             pygame.draw.line(config.window, self.color, self.rect.center,
-                            (top_pipe_x, top_pipe_bottom))
+                             (self.rect.center[0], config.pipes[0].top_rect.bottom))
 
-            # Line to mid pipe (the x-coordinate is already calculated)
-            self.vision[1] = max(0, bottom_pipe_x - self.rect.center[0]) / 500
-            #pygame.draw.line(config.window, self.color, self.rect.center,
-            #                (bottom_pipe_x, self.rect.center[1]))
+            # Line to mid pipe
+            self.vision[1] = max(0, self.closest_pipe().x - self.rect.center[0]) / 500
+            pygame.draw.line(config.window, self.color, self.rect.center,
+                             (config.pipes[0].x, self.rect.center[1]))
 
             # Line to bottom pipe
-            self.vision[2] = max(0, bottom_pipe_top - self.rect.center[1]) / 500
+            self.vision[2] = max(0, self.closest_pipe().bottom_rect.top - self.rect.center[1]) / 500
             pygame.draw.line(config.window, self.color, self.rect.center,
-                            (bottom_pipe_x, bottom_pipe_top))
+                             (self.rect.center[0], config.pipes[0].bottom_rect.top))
 
 
     def think(self):
         self.decision = self.brain.feed_forward(self.vision)
         if self.decision > 0.73:
             self.bird_flap()
+
+
+    def display_decision(self, window):
+        decision_text = self.font.render("Decision:" + str(self.decision) , True, self.text_color)
+        window.blit(decision_text, (10, 10))  # Adjust the position as needed
+
+
+    def calulate_fitness(self):
+        self.fitness = self.lifespan
+
+    def clone(self):
+        clone = Player()
+        clone.fitness = self.fitness
+        clone.brain = self.brain.clone()
+        clone.brain.generate_net()
+        return clone
 
         
