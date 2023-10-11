@@ -23,6 +23,14 @@ class Population:
                 p.update(config.ground)
 
     def natural_selection(self):
+
+        print("Gen: " + str(self.generation))
+        print("Best score: " + str(config.score))
+        if config.score > config.best_score:
+            config.best_score = config.score
+            config.best_score_of_generation = self.generation
+        print("----------------------------")
+
         #print('SPECIATE')
         self.speciate()
 
@@ -41,12 +49,6 @@ class Population:
         #print('CHILDREN FOR NEXT GEN')
         self.next_gen()
 
-        print("Gen: " + str(self.generation))
-        print("Best score: " + str(config.score))
-        if config.score > config.best_score:
-            config.best_score = config.score
-            config.best_score_of_generation = self.generation
-        print("----------------------------")
 
 
     def speciate(self):
